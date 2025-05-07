@@ -1,6 +1,5 @@
 
 import { Download, Image, Github } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -8,39 +7,31 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center border-t border-micro-purple/10 pt-8">
           <div className="flex items-center gap-2 mb-6 md:mb-0">
-            <Link to="/" className="flex items-center gap-2">
-              <Image className="h-6 w-6 text-micro-purple" />
-              <h2 className="text-xl font-medium">
-                micro<span className="text-micro-purple">scapes</span>
-              </h2>
-            </Link>
+            <Image className="h-6 w-6 text-micro-purple" />
+            <h2 className="text-xl font-medium">
+              micro<span className="text-micro-purple">scapes</span>
+            </h2>
           </div>
           
           <div className="flex items-center gap-4">
-            <Link 
-              to="/upload" 
-              className="text-sm text-micro-gray hover:text-micro-purple transition-colors duration-300"
-            >
-              Upload
-            </Link>
-            <Link 
-              to="#" 
+            <a 
+              href="#" 
               className="text-sm text-micro-gray hover:text-micro-purple transition-colors duration-300"
             >
               Privacy
-            </Link>
-            <Link 
-              to="#" 
+            </a>
+            <a 
+              href="#" 
               className="text-sm text-micro-gray hover:text-micro-purple transition-colors duration-300"
             >
               Terms
-            </Link>
-            <Link 
-              to="#" 
+            </a>
+            <a 
+              href="#" 
               className="text-sm text-micro-gray hover:text-micro-purple transition-colors duration-300"
             >
               Contact
-            </Link>
+            </a>
           </div>
         </div>
         

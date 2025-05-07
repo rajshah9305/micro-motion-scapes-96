@@ -1,55 +1,72 @@
 
-import { ArrowDownCircle, Upload } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { useRef, useState, useEffect } from "react";
+import { ArrowDown } from "lucide-react";
 
 const HeroSection = () => {
-  const scrollToWallpapers = () => {
-    const element = document.getElementById('featured-wallpapers');
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
+  const [isVisible, setIsVisible] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    setIsVisible(true);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+    
+    return () => {
+      if (heroRef.current) {
+        observer.unobserve(heroRef.current);
+      }
+    };
+  }, []);
+
+  const scrollToContent = () => {
+    const contentSection = document.getElementById("featured-wallpapers");
+    if (contentSection) {
+      contentSection.scrollIntoView({ behavior: "smooth" });
     }
   };
-
+  
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-6 md:px-10 pt-20 pb-10">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-micro-softest-white to-micro-softer-white dark:from-micro-darkest-purple dark:to-micro-dark-purple -z-10" />
+    <div 
+      ref={heroRef}
+      className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden"
+    >
+      <div className={`absolute inset-0 bg-gradient-to-br from-micro-purple/10 to-transparent transition-opacity duration-700 ease-in-out opacity-${isVisible ? '100' : '0'}`} />
       
-      {/* Floating orbs */}
-      <div className="absolute top-1/4 left-1/4 h-40 w-40 bg-micro-purple/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/3 h-60 w-60 bg-micro-purple/5 rounded-full blur-3xl" />
+      <div 
+        className={`absolute inset-0 bg-[url('/public/lovable-uploads/5a0d7dc9-da28-4072-bb88-2c7b511950ed.png')] bg-cover bg-center transition-transform duration-1000 ease-out ${isVisible ? 'scale-100' : 'scale-110'}`}
+        style={{ opacity: 0.5 }}
+      />
       
-      <div className="max-w-4xl text-center">
-        <div className="animate-fade-in">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Beautiful <span className="text-micro-purple">Wallpapers</span> for All Your Devices
-          </h1>
-          
-          <p className="text-micro-gray dark:text-white/70 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
-            Explore our curated collection of high-resolution wallpapers designed to make your devices look stunning.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button 
-              className="micro-button-primary text-base h-12 px-8"
-              onClick={scrollToWallpapers}
-            >
-              <ArrowDownCircle className="h-5 w-5 mr-2" />
-              Explore Wallpapers
-            </Button>
-            
-            <Link to="/upload">
-              <Button variant="outline" className="micro-button text-base h-12 px-8">
-                <Upload className="h-5 w-5 mr-2" />
-                Upload Your Own
-              </Button>
-            </Link>
-          </div>
-        </div>
+      <div className="absolute inset-0 bg-background/10 backdrop-blur-[2px]" />
+      
+      <div className={`relative z-10 text-center px-6 max-w-4xl mx-auto transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+          Discover <span className="text-shimmer font-bold">beautiful</span> wallpapers for your devices
+        </h1>
+        <p className="text-lg md:text-xl opacity-90 mb-10 max-w-2xl mx-auto">
+          Curated collection of high-quality wallpapers to transform your screens with stunning visuals.
+        </p>
+        <button 
+          onClick={scrollToContent}
+          className="micro-button-primary group"
+        >
+          Explore Wallpapers
+        </button>
+      </div>
+      
+      <div 
+        className="absolute bottom-8 animate-bounce cursor-pointer" 
+        onClick={scrollToContent}
+      >
+        <ArrowDown className="h-6 w-6 text-white drop-shadow-md" />
       </div>
     </div>
   );
