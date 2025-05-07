@@ -11,6 +11,7 @@ const ImageUploader = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Nature");
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -30,7 +31,7 @@ const ImageUploader = () => {
     return () => URL.revokeObjectURL(objectUrl);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!selectedFile) {
@@ -51,8 +52,12 @@ const ImageUploader = () => {
       return;
     }
     
+    setIsUploading(true);
+    
     // In a real app, we would upload the file to a server here
-    // For now, we'll just show a success message
+    // Simulate upload delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
     toast({
       title: "Upload successful",
       description: `Your wallpaper "${title}" has been submitted and is pending review.`,
@@ -63,6 +68,7 @@ const ImageUploader = () => {
     setPreview(null);
     setTitle("");
     setCategory("Nature");
+    setIsUploading(false);
   };
 
   return (
@@ -88,7 +94,10 @@ const ImageUploader = () => {
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <label className="block text-sm font-medium">Image</label>
-                <div className={`border-2 border-dashed rounded-lg p-6 ${preview ? 'border-micro-purple' : 'border-gray-300 hover:border-micro-purple'} transition-all duration-200 cursor-pointer text-center`}>
+                <div 
+                  className={`border-2 border-dashed rounded-lg p-6 ${preview ? 'border-micro-purple' : 'border-gray-300 hover:border-micro-purple'} transition-all duration-200 cursor-pointer text-center`}
+                  onClick={() => document.getElementById('image-upload')?.click()}
+                >
                   {preview ? (
                     <div className="relative w-full aspect-video">
                       <img 
@@ -122,7 +131,6 @@ const ImageUploader = () => {
                       type="button" 
                       variant="outline"
                       className="micro-button"
-                      onClick={(e) => e.preventDefault()}
                     >
                       <ImageIcon className="h-4 w-4 mr-2" />
                       {preview ? "Change image" : "Select image"}
@@ -164,9 +172,19 @@ const ImageUploader = () => {
               <Button 
                 type="submit" 
                 className="micro-button-primary w-full"
+                disabled={isUploading}
               >
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Wallpaper
+                {isUploading ? (
+                  <>
+                    <span className="animate-pulse mr-2">●</span>
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Wallpaper
+                  </>
+                )}
               </Button>
             </CardFooter>
           </form>
