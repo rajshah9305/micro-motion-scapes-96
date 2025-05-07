@@ -16,7 +16,15 @@ const WallpaperCard = ({ src, title, category }: WallpaperProps) => {
   
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // In a real app, we would handle the actual download here
+    
+    // Create an anchor element and set the href to the image source
+    const link = document.createElement('a');
+    link.href = src;
+    link.download = `${title.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
     toast({
       title: "Download started",
       description: `Downloading ${title}...`,
@@ -24,7 +32,9 @@ const WallpaperCard = ({ src, title, category }: WallpaperProps) => {
   };
   
   const handleView = () => {
-    // In a real app, we would open a fullscreen view
+    // Open image in a new tab
+    window.open(src, '_blank');
+    
     toast({
       title: "Opening wallpaper",
       description: `Viewing ${title} in full screen`,
