@@ -78,7 +78,6 @@ const FeaturedWallpapers = () => {
   const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
   const [fullscreenWallpaper, setFullscreenWallpaper] = useState<WallpaperProps | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
-  const [isGridView, setIsGridView] = useState(true);
 
   // Track image loading status
   const handleImageLoad = (id: string) => {
@@ -118,11 +117,6 @@ const FeaturedWallpapers = () => {
     }
   };
 
-  // Toggle between grid and masonry view
-  const toggleView = () => {
-    setIsGridView(!isGridView);
-  };
-
   useEffect(() => {
     // Filter wallpapers based on active category
     const filtered = activeCategory === 'All' 
@@ -147,30 +141,30 @@ const FeaturedWallpapers = () => {
   }, [filteredWallpapers]);
 
   return (
-    <section id="featured-wallpapers" className="py-20 px-6 md:px-10 bg-micro-softer-white dark:bg-micro-darkest-purple">
+    <section id="featured-wallpapers" className="py-20 px-6 md:px-10 bg-micro-softer-white dark:bg-micro-darkest-purple relative overflow-hidden">
+      {/* Background decoration elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-micro-purple/10 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-micro-dark-purple/10 rounded-full blur-3xl -z-10"></div>
+      
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-10">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Wallpapers</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-micro-purple to-micro-dark-purple bg-clip-text text-transparent">
+                Featured Wallpapers
+              </span>
+            </h2>
             <p className="text-micro-gray dark:text-white/70 max-w-xl">
               Explore our collection of high-quality wallpapers curated for all your devices.
+              Each piece tells a unique story through color and composition.
             </p>
           </div>
-          <div className="mt-6 md:mt-0 flex gap-3">
-            <Button 
-              variant="outline" 
-              onClick={toggleView}
-              className="bg-white bg-opacity-10 border border-white/10"
-            >
-              {isGridView ? 'Masonry View' : 'Grid View'}
-            </Button>
-            <Button asChild className="micro-button-primary">
-              <Link to="/upload">
-                <UploadCloud className="h-4 w-4 mr-2" />
-                Upload Wallpaper
-              </Link>
-            </Button>
-          </div>
+          <Button asChild className="micro-button-primary mt-6 md:mt-0">
+            <Link to="/upload">
+              <UploadCloud className="h-4 w-4 mr-2" />
+              Upload Wallpaper
+            </Link>
+          </Button>
         </div>
         
         <CategoryFilter 
@@ -179,14 +173,11 @@ const FeaturedWallpapers = () => {
           onSelectCategory={setActiveCategory} 
         />
         
-        <div className={`${isGridView 
-          ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8' 
-          : 'columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 space-y-6 md:space-y-8'}`}
-        >
+        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
           {visibleItems.map((wallpaper, index) => (
             <div 
               key={wallpaper.id}
-              className={`opacity-0 animate-fade-in ${!isGridView ? 'mb-6 md:mb-8 break-inside-avoid' : ''}`}
+              className="opacity-0 animate-fade-in mb-6 break-inside-avoid"
               style={{ 
                 animationDelay: `${index * 100}ms`, 
                 animationFillMode: 'forwards',
@@ -197,11 +188,17 @@ const FeaturedWallpapers = () => {
                 onImageLoad={() => handleImageLoad(wallpaper.id)}
                 onImageError={() => handleImageError(wallpaper.id)}
                 onView={handleViewWallpaper}
-                displayMode={isGridView ? 'grid' : 'masonry'}
               />
             </div>
           ))}
         </div>
+        
+        {visibleItems.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="h-12 w-12 rounded-full border-2 border-micro-purple border-t-transparent animate-spin mb-4"></div>
+            <p className="text-micro-gray dark:text-white/70">Loading wallpapers...</p>
+          </div>
+        )}
       </div>
 
       {/* Fullscreen wallpaper view */}

@@ -15,7 +15,6 @@ export interface WallpaperProps {
 
 interface WallpaperCardProps extends WallpaperProps {
   onView: (id: string) => void;
-  displayMode?: 'grid' | 'masonry';
 }
 
 const WallpaperCard = ({ 
@@ -25,8 +24,7 @@ const WallpaperCard = ({
   id, 
   onImageLoad, 
   onImageError, 
-  onView,
-  displayMode = 'grid'
+  onView
 }: WallpaperCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
@@ -34,7 +32,6 @@ const WallpaperCard = ({
   
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // In a real app, we would handle the actual download here
     toast({
       title: "Download started",
       description: `Downloading ${title}...`,
@@ -55,15 +52,10 @@ const WallpaperCard = ({
     setHasImageError(true);
     if (onImageError) onImageError();
   };
-
-  // Set different heights based on the display mode
-  const cardHeightClass = displayMode === 'grid' 
-    ? 'h-[350px] md:h-[400px]' 
-    : '';
   
   return (
     <div 
-      className={`micro-card micro-hover group ${cardHeightClass} cursor-pointer relative overflow-hidden ${displayMode === 'masonry' ? 'w-full' : ''}`}
+      className="micro-card micro-hover group cursor-pointer relative overflow-hidden w-full mb-6"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleView}
@@ -74,9 +66,9 @@ const WallpaperCard = ({
         </div>
       )}
       
-      <div className="relative h-full overflow-hidden">
+      <div className="relative overflow-hidden">
         {hasImageError ? (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 p-4 text-center">
+          <div className="w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 p-4 text-center">
             <div>
               <p className="text-micro-gray dark:text-white/70 mb-2">Failed to load image</p>
               <p className="text-sm text-micro-gray dark:text-white/50">{title}</p>
@@ -86,13 +78,14 @@ const WallpaperCard = ({
           <img 
             src={src.replace('/public', '')} 
             alt={title} 
-            className={`w-full ${displayMode === 'grid' ? 'h-full' : ''} object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+            className="w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] rounded-t-xl"
             onLoad={handleImageLoad}
             onError={handleImageError}
+            loading="lazy"
           />
         )}
         
-        <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+        <div className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
         
         <div className={`absolute bottom-0 left-0 right-0 p-4 transition-all duration-300 transform ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <h3 className="text-white text-xl font-medium mb-1 drop-shadow-md">{title}</h3>

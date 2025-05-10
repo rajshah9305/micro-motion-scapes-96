@@ -132,6 +132,14 @@ export default {
 					"0%, 100%": { opacity: "1" },
 					"50%": { opacity: "0.5" }
 				},
+				"float": {
+					"0%, 100%": { transform: "translateY(0)" },
+					"50%": { transform: "translateY(-10px)" }
+				},
+				"breathe": {
+					"0%, 100%": { transform: "scale(1)" },
+					"50%": { transform: "scale(1.05)" }
+				}
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
@@ -147,6 +155,8 @@ export default {
 				"image-glow": "image-glow 1.5s ease-in-out",
 				"text-shimmer": "text-shimmer 2s infinite linear",
 				"pulse-slow": "pulse-slow 3s infinite ease-in-out",
+				"float": "float 6s infinite ease-in-out",
+				"breathe": "breathe 8s infinite ease-in-out"
 			},
 			fontFamily: {
 				sans: ['Inter var', 'sans-serif'],
