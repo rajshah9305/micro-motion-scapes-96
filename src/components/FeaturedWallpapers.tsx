@@ -1,7 +1,10 @@
 
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { UploadCloud } from 'lucide-react';
 import WallpaperCard, { WallpaperProps } from './WallpaperCard';
 import CategoryFilter from './CategoryFilter';
+import { Button } from '@/components/ui/button';
 
 // Sample wallpapers data
 const wallpapersData: WallpaperProps[] = [
@@ -71,6 +74,18 @@ const FeaturedWallpapers = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [filteredWallpapers, setFilteredWallpapers] = useState<WallpaperProps[]>(wallpapersData);
   const [visibleItems, setVisibleItems] = useState<WallpaperProps[]>([]);
+  const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
+
+  // Track image loading status
+  const handleImageLoad = (id: string) => {
+    setImagesLoaded(prev => ({ ...prev, [id]: true }));
+  };
+
+  const handleImageError = (id: string) => {
+    console.error(`Failed to load image for wallpaper ${id}`);
+    // We still mark it as loaded to remove the loading state
+    setImagesLoaded(prev => ({ ...prev, [id]: true }));
+  };
 
   // Extract unique categories from data
   const categories = ['All', ...new Set(wallpapersData.map(item => item.category))];
@@ -101,10 +116,22 @@ const FeaturedWallpapers = () => {
   return (
     <section id="featured-wallpapers" className="py-20 px-6 md:px-10 bg-micro-softer-white dark:bg-micro-darkest-purple">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Featured Wallpapers</h2>
-        <p className="text-center text-micro-gray dark:text-white/70 mb-10 max-w-xl mx-auto">
-          Explore our collection of high-quality wallpapers curated for all your devices.
-        </p>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-10">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Wallpapers</h2>
+            <p className="text-micro-gray dark:text-white/70 max-w-xl">
+              Explore our collection of high-quality wallpapers curated for all your devices.
+            </p>
+          </div>
+          <div className="mt-6 md:mt-0">
+            <Button asChild className="micro-button-primary">
+              <Link to="/upload">
+                <UploadCloud className="h-4 w-4 mr-2" />
+                Upload Wallpaper
+              </Link>
+            </Button>
+          </div>
+        </div>
         
         <CategoryFilter 
           categories={categories} 
@@ -119,7 +146,11 @@ const FeaturedWallpapers = () => {
               className="opacity-0 animate-fade-in"
               style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
             >
-              <WallpaperCard {...wallpaper} />
+              <WallpaperCard 
+                {...wallpaper} 
+                onImageLoad={() => handleImageLoad(wallpaper.id)}
+                onImageError={() => handleImageError(wallpaper.id)}
+              />
             </div>
           ))}
         </div>

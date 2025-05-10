@@ -9,10 +9,14 @@ export interface WallpaperProps {
   src: string;
   title: string;
   category: string;
+  onImageLoad?: () => void;
+  onImageError?: () => void;
 }
 
-const WallpaperCard = ({ src, title, category }: WallpaperProps) => {
+const WallpaperCard = ({ src, title, category, id, onImageLoad, onImageError }: WallpaperProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [hasImageError, setHasImageError] = useState(false);
   
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -31,19 +35,47 @@ const WallpaperCard = ({ src, title, category }: WallpaperProps) => {
     });
   };
   
+  const handleImageLoad = () => {
+    setIsImageLoading(false);
+    if (onImageLoad) onImageLoad();
+  };
+  
+  const handleImageError = () => {
+    setIsImageLoading(false);
+    setHasImageError(true);
+    if (onImageError) onImageError();
+  };
+  
   return (
     <div 
-      className="micro-card micro-hover group h-[350px] md:h-[400px] cursor-pointer"
+      className="micro-card micro-hover group h-[350px] md:h-[400px] cursor-pointer relative overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleView}
     >
+      {isImageLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+          <div className="h-10 w-10 rounded-full border-2 border-micro-purple border-t-transparent animate-spin"></div>
+        </div>
+      )}
+      
       <div className="relative h-full overflow-hidden">
-        <img 
-          src={src} 
-          alt={title} 
-          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-        />
+        {hasImageError ? (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 p-4 text-center">
+            <div>
+              <p className="text-micro-gray dark:text-white/70 mb-2">Failed to load image</p>
+              <p className="text-sm text-micro-gray dark:text-white/50">{title}</p>
+            </div>
+          </div>
+        ) : (
+          <img 
+            src={src.replace('/public', '')} 
+            alt={title} 
+            className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
+        )}
         
         <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
         
