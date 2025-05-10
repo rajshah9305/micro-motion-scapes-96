@@ -15,6 +15,7 @@ export interface WallpaperProps {
 
 interface WallpaperCardProps extends WallpaperProps {
   onView: (id: string) => void;
+  displayMode?: 'grid' | 'masonry';
 }
 
 const WallpaperCard = ({ 
@@ -24,7 +25,8 @@ const WallpaperCard = ({
   id, 
   onImageLoad, 
   onImageError, 
-  onView 
+  onView,
+  displayMode = 'grid'
 }: WallpaperCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
@@ -53,10 +55,15 @@ const WallpaperCard = ({
     setHasImageError(true);
     if (onImageError) onImageError();
   };
+
+  // Set different heights based on the display mode
+  const cardHeightClass = displayMode === 'grid' 
+    ? 'h-[350px] md:h-[400px]' 
+    : '';
   
   return (
     <div 
-      className="micro-card micro-hover group h-[350px] md:h-[400px] cursor-pointer relative overflow-hidden"
+      className={`micro-card micro-hover group ${cardHeightClass} cursor-pointer relative overflow-hidden ${displayMode === 'masonry' ? 'w-full' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleView}
@@ -79,7 +86,7 @@ const WallpaperCard = ({
           <img 
             src={src.replace('/public', '')} 
             alt={title} 
-            className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+            className={`w-full ${displayMode === 'grid' ? 'h-full' : ''} object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
           />

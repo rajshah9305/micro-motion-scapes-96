@@ -78,6 +78,7 @@ const FeaturedWallpapers = () => {
   const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
   const [fullscreenWallpaper, setFullscreenWallpaper] = useState<WallpaperProps | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
+  const [isGridView, setIsGridView] = useState(true);
 
   // Track image loading status
   const handleImageLoad = (id: string) => {
@@ -117,6 +118,11 @@ const FeaturedWallpapers = () => {
     }
   };
 
+  // Toggle between grid and masonry view
+  const toggleView = () => {
+    setIsGridView(!isGridView);
+  };
+
   useEffect(() => {
     // Filter wallpapers based on active category
     const filtered = activeCategory === 'All' 
@@ -150,7 +156,14 @@ const FeaturedWallpapers = () => {
               Explore our collection of high-quality wallpapers curated for all your devices.
             </p>
           </div>
-          <div className="mt-6 md:mt-0">
+          <div className="mt-6 md:mt-0 flex gap-3">
+            <Button 
+              variant="outline" 
+              onClick={toggleView}
+              className="bg-white bg-opacity-10 border border-white/10"
+            >
+              {isGridView ? 'Masonry View' : 'Grid View'}
+            </Button>
             <Button asChild className="micro-button-primary">
               <Link to="/upload">
                 <UploadCloud className="h-4 w-4 mr-2" />
@@ -166,18 +179,25 @@ const FeaturedWallpapers = () => {
           onSelectCategory={setActiveCategory} 
         />
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className={`${isGridView 
+          ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8' 
+          : 'columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 space-y-6 md:space-y-8'}`}
+        >
           {visibleItems.map((wallpaper, index) => (
             <div 
               key={wallpaper.id}
-              className="opacity-0 animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+              className={`opacity-0 animate-fade-in ${!isGridView ? 'mb-6 md:mb-8 break-inside-avoid' : ''}`}
+              style={{ 
+                animationDelay: `${index * 100}ms`, 
+                animationFillMode: 'forwards',
+              }}
             >
               <WallpaperCard 
                 {...wallpaper} 
                 onImageLoad={() => handleImageLoad(wallpaper.id)}
                 onImageError={() => handleImageError(wallpaper.id)}
                 onView={handleViewWallpaper}
+                displayMode={isGridView ? 'grid' : 'masonry'}
               />
             </div>
           ))}
