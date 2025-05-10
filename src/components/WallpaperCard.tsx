@@ -13,7 +13,19 @@ export interface WallpaperProps {
   onImageError?: () => void;
 }
 
-const WallpaperCard = ({ src, title, category, id, onImageLoad, onImageError }: WallpaperProps) => {
+interface WallpaperCardProps extends WallpaperProps {
+  onView: (id: string) => void;
+}
+
+const WallpaperCard = ({ 
+  src, 
+  title, 
+  category, 
+  id, 
+  onImageLoad, 
+  onImageError, 
+  onView 
+}: WallpaperCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasImageError, setHasImageError] = useState(false);
@@ -28,11 +40,7 @@ const WallpaperCard = ({ src, title, category, id, onImageLoad, onImageError }: 
   };
   
   const handleView = () => {
-    // In a real app, we would open a fullscreen view
-    toast({
-      title: "Opening wallpaper",
-      description: `Viewing ${title} in full screen`,
-    });
+    onView(id);
   };
   
   const handleImageLoad = () => {

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { UploadCloud } from 'lucide-react';
 import WallpaperCard, { WallpaperProps } from './WallpaperCard';
+import FullscreenWallpaper from './FullscreenWallpaper';
 import CategoryFilter from './CategoryFilter';
 import { Button } from '@/components/ui/button';
 
@@ -75,6 +76,8 @@ const FeaturedWallpapers = () => {
   const [filteredWallpapers, setFilteredWallpapers] = useState<WallpaperProps[]>(wallpapersData);
   const [visibleItems, setVisibleItems] = useState<WallpaperProps[]>([]);
   const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
+  const [fullscreenWallpaper, setFullscreenWallpaper] = useState<WallpaperProps | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
   // Track image loading status
   const handleImageLoad = (id: string) => {
@@ -89,6 +92,30 @@ const FeaturedWallpapers = () => {
 
   // Extract unique categories from data
   const categories = ['All', ...new Set(wallpapersData.map(item => item.category))];
+
+  // Handle view wallpaper in fullscreen
+  const handleViewWallpaper = (id: string) => {
+    const index = filteredWallpapers.findIndex(item => item.id === id);
+    if (index !== -1) {
+      setFullscreenWallpaper(filteredWallpapers[index]);
+      setCurrentIndex(index);
+    }
+  };
+
+  // Handle navigation in fullscreen mode
+  const handleNext = () => {
+    if (currentIndex < filteredWallpapers.length - 1) {
+      setFullscreenWallpaper(filteredWallpapers[currentIndex + 1]);
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setFullscreenWallpaper(filteredWallpapers[currentIndex - 1]);
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
 
   useEffect(() => {
     // Filter wallpapers based on active category
@@ -150,11 +177,24 @@ const FeaturedWallpapers = () => {
                 {...wallpaper} 
                 onImageLoad={() => handleImageLoad(wallpaper.id)}
                 onImageError={() => handleImageError(wallpaper.id)}
+                onView={handleViewWallpaper}
               />
             </div>
           ))}
         </div>
       </div>
+
+      {/* Fullscreen wallpaper view */}
+      {fullscreenWallpaper && (
+        <FullscreenWallpaper 
+          wallpaper={fullscreenWallpaper}
+          onClose={() => setFullscreenWallpaper(null)}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          hasNext={currentIndex < filteredWallpapers.length - 1}
+          hasPrevious={currentIndex > 0}
+        />
+      )}
     </section>
   );
 };

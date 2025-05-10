@@ -1,23 +1,17 @@
 
 import { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon, Image, UploadCloud } from "lucide-react";
+import { Menu, X, Image, UploadCloud } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Navbar = () => {
-  const { theme, setTheme } = useTheme();
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-  
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
   };
   
   useEffect(() => {
@@ -50,45 +44,21 @@ const Navbar = () => {
           
           <div className="hidden md:flex items-center gap-6">
             <Link to="/" className="micro-nav-link">Home</Link>
-            <a href="#featured-wallpapers" className="micro-nav-link">Wallpapers</a>
-            <a href="#" className="micro-nav-link">About</a>
+            <a href="/#featured-wallpapers" className="micro-nav-link">Wallpapers</a>
+            <Link to="/about" className="micro-nav-link">About</Link>
             <Link to="/upload" className="micro-nav-link flex items-center gap-1">
               <UploadCloud className="h-4 w-4" />
               Upload
             </Link>
           </div>
           
-          <div className="hidden md:flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={toggleTheme}
-              className="rounded-full border-micro-purple/20"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-400" />
-              ) : (
-                <Moon className="h-[1.2rem] w-[1.2rem] text-micro-purple" />
-              )}
-            </Button>
+          <div className="hidden md:flex items-center">
             <Button className="micro-button-primary">
               Download App
             </Button>
           </div>
           
-          <div className="md:hidden flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={toggleTheme}
-              className="rounded-full border-micro-purple/20"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-400" />
-              ) : (
-                <Moon className="h-[1.2rem] w-[1.2rem] text-micro-purple" />
-              )}
-            </Button>
+          <div className="md:hidden flex items-center">
             <Button 
               variant="outline" 
               size="icon" 
@@ -117,19 +87,19 @@ const Navbar = () => {
               Home
             </Link>
             <a 
-              href="#featured-wallpapers" 
+              href="/#featured-wallpapers" 
               className="text-xl font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               Wallpapers
             </a>
-            <a 
-              href="#" 
+            <Link 
+              to="/about" 
               className="text-xl font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               About
-            </a>
+            </Link>
             <Link 
               to="/upload" 
               className="text-xl font-medium flex items-center gap-2"
